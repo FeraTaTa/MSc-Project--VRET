@@ -4,6 +4,11 @@ using UnityEngine;
 using System;
 using System.IO.Ports;
 
+//Code mostly from https://www.alanzucconi.com/2015/10/07/how-to-integrate-arduino-with-unity/#more-2979
+//This method of communicating with the Arduino uses coroutines to read from the Arduino 
+//  after sending a "PING" message to the Arduino over serial port and then prints "PONG" in the Unity debug log (which is the string sent by Arduino)
+//  Unity coroutines are not really executed in parallel and is not thread safe.
+//TODO change the method to use real threads
 public class ArduinoRead : MonoBehaviour
 {
     SerialPort stream;
@@ -43,7 +48,6 @@ public class ArduinoRead : MonoBehaviour
         try
         {
             stream.WriteLine("PING");
-            //stream.Write("\r");  // Carriage Return
             stream.BaseStream.Flush();
         }
         catch (Exception)
@@ -100,6 +104,7 @@ public class ArduinoRead : MonoBehaviour
             //wait for receiving data
             StartCoroutine
             (
+                //TODO change Debug.Log(s) into someFunc(s)
                 AsynchronousReadFromArduino
                 ((string s) => Debug.Log(s),     // Callback
                     () => Debug.LogError("Error!"), // Error callback
