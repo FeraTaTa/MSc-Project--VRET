@@ -12,22 +12,41 @@ public class ArduinoThreadedRead : MonoBehaviour
     public string port = "COM4";
     public int baudRate = 9600;
     public int timeout = 5000;
+    public bool hasError = false;
+    public float framesPerPing = 1;
+
 
     private Thread thread;
     private Queue outputQueue;  // From Unity to Arduino
     private Queue inputQueue;   // From Arduino to Unity
 
-    //// Start is called before the first frame update
-    //void Start()
-    //{
-        
-    //}
+    private string rXMsg;
+    int i = 0, j = 0;
 
-    //// Update is called once per frame
-    //void Update()
-    //{
-        
-    //}
+    // Start is called before the first frame update
+    void Start()
+    {
+        StartThread();
+    }
+
+    // Update is called once per frame
+    void Update()
+    {
+        if (Time.frameCount % framesPerPing == 0 && !hasError)
+        {
+            ////Send control character to request data
+            SendToArduino("ECHO "+i);
+            Debug.Log("ping sent "+i);
+            i++;
+        }
+        //check for receiving data
+        rXMsg = ReadFromArduino();
+        if(rXMsg != null)
+        {
+            Debug.Log(rXMsg);
+            j++;
+        }
+    }
 
     public void StartThread()
     {
@@ -63,11 +82,13 @@ public class ArduinoThreadedRead : MonoBehaviour
         }
     }
 
+    //adds a message to the output queue to be sent to the Arduino
     public void SendToArduino(string command)
     {
         outputQueue.Enqueue(command);
     }
 
+    //extracts a received message from the input queue
     public string ReadFromArduino()
     {
         if (inputQueue.Count == 0)
@@ -75,13 +96,15 @@ public class ArduinoThreadedRead : MonoBehaviour
 
         return (string)inputQueue.Dequeue();
     }
-
+    
+    //writes and transmits a message to the Arduino via serial
     public void WriteToArduino(string message)
     {
         stream.WriteLine(message);
         stream.BaseStream.Flush();
     }
 
+    //reads a message from Arduino via serial
     public string ReadFromArduino(int timeout = 0)
     {
         stream.ReadTimeout = timeout;
