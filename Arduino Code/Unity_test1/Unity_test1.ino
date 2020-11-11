@@ -34,7 +34,7 @@ void checkHR(){
   }
   else{
     // send the value of analog input 0:
-    inByte = analogRead(A0); 
+    inByte = analogRead(A5); 
     //Serial.println(inByte);
       
       // BPM calculation check
@@ -73,12 +73,14 @@ void calculateBPM () {
   BPM = int( total / validCount );
   beat_old = beat_new;
   beatIndex = (beatIndex + 1) % (sizeof(beats)/sizeof(beats[0]));  // cycle through the array instead of using FIFO queue
+      Serial.println();
       Serial.print("valid count is: ");
       Serial.println( validCount);
           Serial.print("currentBPM is ");
     Serial.println(currentBPM);
-    Serial.print("bpm is ");
+    Serial.print("average bpm is ");
     Serial.println(BPM);
+ 
 }
 
 
