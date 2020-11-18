@@ -1,4 +1,6 @@
-﻿using System.Collections;
+﻿#define readHR
+
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using System.Threading;
@@ -35,14 +37,21 @@ public class ArduinoThreadedRead : MonoBehaviour
         if (Time.frameCount % framesPerPing == 0 && !hasError)
         {
             ////Send control character to request data
+#if echotest
             SendToArduino("ECHO "+i);
-            Debug.Log("ping sent "+i);
+            Debug.Log("echo sent "+i);
             i++;
+#elif readHR
+            //The Arduino continuously outputs the current instantaneous BPM reading triggered by each heart beat detection
+#endif
+
+
         }
         //check for receiving data
         rXMsg = ReadFromArduino();
         if(rXMsg != null)
         {
+            CSVManager.AppendToReport(rXMsg);
             Debug.Log(rXMsg);
             j++;
         }
