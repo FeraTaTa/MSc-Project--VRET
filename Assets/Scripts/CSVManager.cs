@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 using System.IO;
+using System.Collections.Generic;
 
 public static class CSVManager
 {
@@ -37,6 +38,25 @@ public static class CSVManager
         }
     }
 
+    public static void AppendFilteredData(double[] data)
+    {
+        VerifyDirectory();
+        VerifyFile();
+        using (StreamWriter sw = File.AppendText(GetFilePath()))
+        {
+            string finalString = "";
+            finalString = "Filtered Data";
+            sw.WriteLine(finalString);
+
+            for (int i = 0; i < data.Length; i++)
+            {
+                sw.WriteLine(data[i].ToString());
+            }
+
+        }
+        
+    }
+
     /// <summary>
     /// Creates a file starting with the header
     /// </summary>
@@ -60,15 +80,32 @@ public static class CSVManager
         }
     }
 
-    #endregion
+    public static void ReadReport()
+    {
+
+        using (var reader = new StreamReader(GetFilePath()))
+        {
+            List<string> listA = new List<string>();
+            List<string> listB = new List<string>();
+            while (!reader.EndOfStream)
+            {
+                var line = reader.ReadLine();
+                var values = line.Split(';');
+
+                listA.Add(values[0]);
+                listB.Add(values[1]);
+            }
+        }
+    }
+#endregion
 
 
-    #region Operations
+#region Operations
 
-    /// <summary>
-    /// if directory doesn't exist create a new directory
-    /// </summary>
-    static void VerifyDirectory()
+/// <summary>
+/// if directory doesn't exist create a new directory
+/// </summary>
+static void VerifyDirectory()
     {
         string dir = GetDirectoryPath();
         if (!Directory.Exists(dir))
