@@ -1,0 +1,15 @@
+	9v
+	ard ground
+	complete ground closed
+	complete ground half open
+	complete ground open
+	distance
+	hr ground
+imperfect box
+	layered wip
+	layered
+oct 14
+	open ihao
+open spark
+open1
+pad placement
